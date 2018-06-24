@@ -1,97 +1,71 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import './Gists.css';
+import GistDetails from './GistDetails';
 
-class GistCard extends Component {
+export default class Gists extends Component {
 
     constructor(props){
-        super(props)
-        this.state = {forks: []}
+        super(props);
+        this.state = {
+            user: '',
+            gists: {},
+            isLoading: true
+        };
     }
 
-    getForks = (id) => {
+    componentWillMount() {
         Promise.all([
-            axios.get(`https://api.github.com/gists/${id}`)
+            axios.get(`https://api.github.com/users/${this.props.query}?client_id=87a39bc4869b746710ec&client_secret=acc5bac9506deb38c10c61e70e83c0eef7be7067`),
+            axios.get(`https://api.github.com/users/${this.props.query}/gists?per_page=100&client_id=87a39bc4869b746710ec&client_secret=acc5bac9506deb38c10c61e70e83c0eef7be7067`)
         ])
-            .then((response) => {
-                this.setState({forks: response.data});
+            .then(([userResponse, gistsResponse]) => {
+                this.setState({user: userResponse.data, gists: gistsResponse.data, isLoading: false});
             })
             .catch(error => {
-                console.log('Error fetching gist forks', error);
+                console.log('Error fetching user gists', error);
             });
-    };
+    }
 
     render(){
         return (
-            <div>
-                { this.props.user.type !== undefined &&
-                <div className="user-info">
-                    <div className="left-column">
-                        <a href={this.props.user.html_url} target="_blank">
-                            <img className="user-avatar"
-                                 src={this.props.user.avatar_url}
-                                 alt={`${this.props.user.name}'`}
-                            />
+            <div className="gists">
+                {this.state.user.type !== undefined &&
+                <div>
+                    <div className="gists__user">
+                        <h2>{this.state.user.name} Gists</h2>
+                        <a href={this.state.user.html_url} target="_blank">
+                            <img className="gists__avatar" src={this.state.user.avatar_url} />
                         </a>
-                        <p className="user-name">
-                            <a href={this.props.user.html_url} target="_blank">{this.props.user.name}</a>
-                        </p>
                     </div>
-                    {this.props.gists &&
-                    this.props.gists.map(gist => {
-                        return (
-                            <li key={gist.id}>
-                                <div>
-                                    "url": {gist.url}
+                    <div>
+                        {this.state.gists &&
+                        this.state.gists.map(gist => {
+                            return (
+                                <div key={gist.id}>
+                                    <h3>
+                                        <a href={this.state.user.html_url}>
+                                            {this.state.user.name}
+                                        </a>
+                                        &nbsp;/&nbsp;
+                                        <a href={gist.url}>
+                                            {gist.id}
+                                        </a>
+                                    </h3>
+                                    <GistDetails id={gist.id} />
+                                    <hr/>
                                 </div>
-                                <div>
-                                    "forks_url": <a href={gist.forks_url} target="_blank">{gist.forks_url}</a>
-                                </div>,
-                                <div>
-                                    "commits_url": {gist.commits_url}
-                                </div>
-                                <div>
-                                    "description": {gist.description},
-                                </div>
-                                <div>
-                                    "comments_url": {gist.comments_url}
-                                </div>
-                                <div>
-                                    "git_pull_url": {gist.git_pull_url}
-                                </div>
-                                <div>
-                                    "created_at": {gist.created_at}
-                                </div>
-                                <div>
-                                    "updated_at": {gist.updated_at}
-                                </div>
-                                <div>
-                                    forks: <a href="#" onClick={this.getForks}>Show forms ..</a>
-                                </div>
-                                {this.state.forks.length &&
-                                <div>
-                                    {gist.forks.slice(-3).forEach((fork, index, forks) => {
-                                        {fork.user.login}
-                                        {index === forks.length - 1 ? ', ' : ''}
-                                    })}
-                                </div>
-                                }
-                                {!this.state.length &&
-                                <div>
-                                    forked by: no forks found
-                                </div>
-                                }
-                            </li>
-                        )
-                    })
-                    }
-
+                            )
+                        })
+                        }
+                    </div>
                 </div>
+                }
+
+                {this.state.isLoading &&
+                    <div className="loader">Loading user's gists ...</div>
                 }
             </div>
         )
     }
 }
-
-
-
-export default GistCard;

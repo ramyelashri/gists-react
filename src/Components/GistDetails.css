@@ -1,0 +1,26 @@
+.gistDetails__tag {
+    padding: 2px;
+    margin-left: 5px;
+    background-color: #333;
+    color: #f3f3f3;
+}
+
+.gistDetails__avatar {
+    width: 30px;
+    height:30px;
+    margin-right: 10px;
+    margin-bottom: -10px;
+    border-radius: 50%;
+}
+
+.gistDetails__forks,
+.gistDetails__files{
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+.gistDetails__forker,
+.gistDetails__file{
+    margin: 15px;
+    display: block;
+}

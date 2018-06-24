@@ -1,30 +1,36 @@
 import React, { Component } from 'react';
+import Gists from "./Gists";
 
 export default class SearchForm extends Component {
 
-    state = {
-        searchText: ''
-    }
-    
-    onSearchChange = event => {
-        this.setState({ searchText: event.target.value });
+    constructor(){
+        super();
+        this.state = {
+            searchText: ''
+        };
     }
 
-    handleSubmit = event => {
+    handleSubmit = (event) => {
         event.preventDefault();
-        this.props.onSearch(this.state.searchText);
-        event.currentTarget.reset();
-    }
+        this.setState({searchText: this.refs.searchText.value});
+    };
 
     render() {
         return (
-            <form className="search-form" onSubmit={this.handleSubmit}>
-                <label className="is-hidden" htmlFor="search">Search</label>
-                <input type="search" 
-                    placeholder="Username"
-                    onChange={this.onSearchChange}
-                />
-            </form>
+            <div>
+                <form onSubmit={this.handleSubmit}>
+                    <label>
+                        Github username:
+                        <input type="search"
+                               ref="searchText"
+                        />
+                    </label>
+                    <input type="submit" />
+                </form>
+                {this.state.searchText &&
+                    <Gists query={this.state.searchText}></Gists>
+                }
+            </div>
         );
     }
 }
