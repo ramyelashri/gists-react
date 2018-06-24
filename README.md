@@ -18,4 +18,4 @@ Install the npm packages described in the `package.json` and verify that it work
 
 ```bash
 yarn install && yarn start
-```rotractor e2e tests, written in JavaScript (*e2e-spec.js)
+```
